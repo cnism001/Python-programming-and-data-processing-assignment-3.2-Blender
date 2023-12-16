@@ -74,3 +74,8 @@ obj = bpy.data.objects.new("TerrainElevationObj", mesh)
 # Link the object to the active collection in the scene to visualize it
 bpy.context.collection.objects.link(obj)
 
+# Convert the bmesh data to the mesh data 
+bm.to_mesh(mesh)
+
+# Free the bmesh to release memory
+bm.free()
