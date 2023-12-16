@@ -1,14 +1,21 @@
-#commented in VSCode, uncommented in Blender
+
 import bpy
 import bmesh
-
+import os
 
 # I used QGIS to warp the file from cellsize 10 to cellsize 40, so instead of 2400x1200 points i have 600x300
 # Function to read elevation data from the  file
 # Path to the .asc file
 
+# Function to get the relative path to the data file
+def get_relative_file_path():
+    # This is the  file name
+    filename = "M5221_resampled.asc"
 
-file_path = 'd:\\M5221_resampled.asc'
+    # Assuming the .blend file is saved in '%\Assignment 3'
+    # This will create a relative path from the .blend file to the .asc file
+    return bpy.path.abspath("//" + filename)
+file_path = get_relative_file_path()
 
 def read_file(file_path):
     with open(file_path, 'r') as file:
