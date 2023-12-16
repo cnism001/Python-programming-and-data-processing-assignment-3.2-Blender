@@ -46,4 +46,22 @@ for row_index, row in enumerate(heights):
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
         verts.append(vert)
+        
+# Update the bmesh's internal vertex index table, to ensure that vertices can be accessed properly by their index
+bm.verts.ensure_lookup_table() 
+
+# Create faces by connecting adjacent vertices
+for row_index in range(nrows - 1): #-1 used because last row and collumn cant form a quad since they wont have enough adjacents
+    for col_index in range(ncols - 1):
+        # Define the four vertices of the current quad
+        v1 = verts[row_index * ncols + col_index]
+        #v2 is to the right of v1, hence col_index+1
+        v2 = verts[row_index * ncols + (col_index + 1)]
+        #v3 is to right and down from v1, hence both row_index+1 and col_index+1
+        v3 = verts[(row_index + 1) * ncols + (col_index + 1)]
+        #v4 is down from v1 hence row_index+1
+        v4 = verts[(row_index + 1) * ncols + col_index]
+
+        # Create a new face using these vertices
+        bm.faces.new((v1, v2, v3, v4))
 
