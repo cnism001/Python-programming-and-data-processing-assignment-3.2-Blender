@@ -7,8 +7,11 @@ import bmesh
 # Function to read elevation data from the  file
 # Path to the .asc file
 file_path = 'd:\\M5221_resampled_160.asc'
+# Path to the .asc file
+file_path = 'd:\\M5221_resampled_160.asc'
 
 def read_file(file_path):
+    with open(file_path, 'r') as file:
     with open(file_path, 'r') as file:
         # Read header lines containing metadata
         #.split()[1]) is expected to grab numerical value of ncols from file, so 600 here, same logic for the rest of the header reader
@@ -35,7 +38,7 @@ heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
 # Create a new bmesh object
 bm = bmesh.new()
 # Create a list to store references to the vertices created below
-verts = []
+'''verts = []
 
 # Iterate over each row and column in the elevation data
 for row_index, row in enumerate(heights):
@@ -49,10 +52,17 @@ for row_index, row in enumerate(heights):
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
         verts.append(vert)
+'''
+verts = [
+    bm.verts.new((0, 0, 0)),  # Vertex 1 at (0, 0, 0)
+    bm.verts.new((1, 0, 0)),  # Vertex 2 at (1, 0, 0)
+    bm.verts.new((1, 1, 0)),  # Vertex 3 at (1, 1, 0)
+    bm.verts.new((0, 1, 0)),  # Vertex 4 at (0, 1, 0)
+]
 
 # Update the bmesh's internal vertex index table, to ensure that vertices can be accessed properly by their index
 bm.verts.ensure_lookup_table() 
-
+'''
 # Create faces by connecting adjacent vertices
 for row_index in range(nrows - 1): #-1 used because last row and collumn cant form a quad since they wont have enough adjacents
     for col_index in range(ncols - 1):
@@ -91,6 +101,7 @@ obj = bpy.data.objects["TerrainElevationObj"]
 # Create a new material
 mat = bpy.data.materials.new(name="MyMaterial")
 
+
     
 # Ensure object is visible in the viewport and render
 obj.hide_viewport = False
@@ -107,3 +118,4 @@ bm.free()
 
 print(obj.data.vertices)  # Should list vertices
 print(obj.data.polygons)  # Should list polygons
+
