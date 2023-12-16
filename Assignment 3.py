@@ -23,7 +23,8 @@ def read_file(file_path):
         heights = [list(map(float, line.split())) for line in file]
 
     return heights, ncols, nrows, xllcorner, yllcorner, cellsize
-
+ase_x = 500000
+base_y = 6834000 #offset for starting position, its not visible otherwise
 # Scaling factors
 #x_scale = 0.05
 #y_scale = 0.05
@@ -34,7 +35,7 @@ heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
 # Create a new bmesh object
 bm = bmesh.new()
 # Create a list to store references to the vertices created below
-'''verts = []
+verts = []
 
 # Iterate over each row and column in the elevation data
 for row_index, row in enumerate(heights):
@@ -48,31 +49,32 @@ for row_index, row in enumerate(heights):
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
         verts.append(vert)
-'''
-verts = [
-    bm.verts.new((0, 0, 0)),  # Vertex 1 at (0, 0, 0)
-    bm.verts.new((1, 0, 0)),  # Vertex 2 at (1, 0, 0)
-    bm.verts.new((1, 1, 0)),  # Vertex 3 at (1, 1, 0)
-    bm.verts.new((0, 1, 0)),  # Vertex 4 at (0, 1, 0)
-]
 
 # Update the bmesh's internal vertex index table, to ensure that vertices can be accessed properly by their index
 bm.verts.ensure_lookup_table() 
-'''
+
 # Create faces by connecting adjacent vertices
 for row_index in range(nrows - 1): #-1 used because last row and collumn cant form a quad since they wont have enough adjacents
     for col_index in range(ncols - 1):
         # Define the four vertices of the current quad
-        v1 = verts[row_index * ncols + col_index]
+        idx1 = row_index * ncols + col_index
         #v2 is to the right of v1, hence col_index+1
-        v2 = verts[row_index * ncols + (col_index + 1)]
+        idx2 = row_index * ncols + (col_index + 1)
         #v3 is to right and down from v1, hence both row_index+1 and col_index+1
-        v3 = verts[(row_index + 1) * ncols + (col_index + 1)]
+        idx3 = (row_index + 1) * ncols + (col_index + 1)
         #v4 is down from v1 hence row_index+1
-        v4 = verts[(row_index + 1) * ncols + col_index]
-        
-        bm.faces.new((v1, v2, v3, v4))
-        '''
+        idx4 = (row_index + 1) * ncols + col_index
+        #checks to no try to create the face if theres no adjacency
+        if idx3 < len(verts) and idx4 < len(verts):
+            v1 = verts[idx1]
+            v2 = verts[idx2]
+            v3 = verts[idx3]
+            v4 = verts[idx4]
+            bm.faces.new((v1, v2, v3, v4))
+        else:
+            print(f"Skipping face at row {row_index}, column {col_index} due to out of bounds")
+        # Create a new face using these vertices
+      
 
 
 # Create a single face using the four vertices
