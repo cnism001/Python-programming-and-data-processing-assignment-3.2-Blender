@@ -33,3 +33,9 @@ file_path = 'd:\\M5221_resampled.asc'
 
 # Reading the elevation data from the file
 heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
+
+# Create a new bmesh object
+bm = bmesh.new()
+
+# Create a list to store references to the vertices created below
+verts = []
