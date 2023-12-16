@@ -46,7 +46,7 @@ for row_index, row in enumerate(heights):
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
         verts.append(vert)
-        
+
 # Update the bmesh's internal vertex index table, to ensure that vertices can be accessed properly by their index
 bm.verts.ensure_lookup_table() 
 
@@ -64,4 +64,13 @@ for row_index in range(nrows - 1): #-1 used because last row and collumn cant fo
 
         # Create a new face using these vertices
         bm.faces.new((v1, v2, v3, v4))
+
+# Create a new Blender mesh object
+mesh = bpy.data.meshes.new("TerrainElevation")
+
+# Create a new Blender object that uses the mesh data
+obj = bpy.data.objects.new("TerrainElevationObj", mesh)
+
+# Link the object to the active collection in the scene to visualize it
+bpy.context.collection.objects.link(obj)
 
