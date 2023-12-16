@@ -27,3 +27,6 @@ def read_file(file_path):
         heights = [list(map(float, line.split())) for line in file]
 
     return heights, ncols, nrows, xllcorner, yllcorner, cellsize
+
+# Path to the .asc file
+file_path = 'd:\\M5221_resampled.asc'
