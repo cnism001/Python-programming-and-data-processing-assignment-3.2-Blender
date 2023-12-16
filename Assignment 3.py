@@ -1,13 +1,15 @@
 #commented in VSCode, uncommented in Blender
-#import bpy
-#import bmesh
+import bpy
+import bmesh
 
 
 # I used QGIS to warp the file from cellsize 10 to cellsize 40, so instead of 2400x1200 points i have 600x300
 # Function to read elevation data from the  file
+# Path to the .asc file
+file_path = 'd:\\M5221_resampled_160.asc'
 
 def read_file(file_path):
-    with open("file_path", 'r') as file:
+    with open(file_path, 'r') as file:
         # Read header lines containing metadata
         #.split()[1]) is expected to grab numerical value of ncols from file, so 600 here, same logic for the rest of the header reader
         ncols = int(file.readline().split()[1])  # Number of columns in the grid, 
@@ -22,34 +24,41 @@ def read_file(file_path):
 
     return heights, ncols, nrows, xllcorner, yllcorner, cellsize
 
-# Path to the .asc file
-file_path = 'd:\\M5221_resampled.asc'
-
+# Scaling factors
+#x_scale = 0.05
+#y_scale = 0.05
+#z_scale = 0.05
 # Reading the elevation data from the file
 heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
 
 # Create a new bmesh object
 bm = bmesh.new()
-
 # Create a list to store references to the vertices created below
-verts = []
+'''verts = []
 
 # Iterate over each row and column in the elevation data
 for row_index, row in enumerate(heights):
     #elevation value give in the file is z
     for col_index, z in enumerate(row):
         # Calculate the x and y coordinates based on the grid position and cell size
-        x = xllcorner + col_index * cellsize
-        y = yllcorner + row_index * cellsize
-
+        x = (xllcorner + col_index * cellsize) #* x_scale
+        y = (yllcorner + row_index * cellsize) #* y_scale
+        #z = z * z_scale
         # Create a new vertex at the calculated position with the elevation as the z-coordinate in the mesh bm
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
         verts.append(vert)
+'''
+verts = [
+    bm.verts.new((0, 0, 0)),  # Vertex 1 at (0, 0, 0)
+    bm.verts.new((1, 0, 0)),  # Vertex 2 at (1, 0, 0)
+    bm.verts.new((1, 1, 0)),  # Vertex 3 at (1, 1, 0)
+    bm.verts.new((0, 1, 0)),  # Vertex 4 at (0, 1, 0)
+]
 
 # Update the bmesh's internal vertex index table, to ensure that vertices can be accessed properly by their index
 bm.verts.ensure_lookup_table() 
-
+'''
 # Create faces by connecting adjacent vertices
 for row_index in range(nrows - 1): #-1 used because last row and collumn cant form a quad since they wont have enough adjacents
     for col_index in range(ncols - 1):
@@ -61,10 +70,21 @@ for row_index in range(nrows - 1): #-1 used because last row and collumn cant fo
         v3 = verts[(row_index + 1) * ncols + (col_index + 1)]
         #v4 is down from v1 hence row_index+1
         v4 = verts[(row_index + 1) * ncols + col_index]
-
+        if idx3 < len(verts) and idx4 < len(verts):
+            v1 = verts[idx1]
+            v2 = verts[idx2]
+            v3 = verts[idx3]
+            v4 = verts[idx4]
+            bm.faces.new((v1, v2, v3, v4))
+        else:
+            print(f"Skipping face at row {row_index}, column {col_index} due to out of bounds")
         # Create a new face using these vertices
         bm.faces.new((v1, v2, v3, v4))
+        '''
 
+
+# Create a single face using the four vertices
+bm.faces.new(verts)
 # Create a new Blender mesh object
 mesh = bpy.data.meshes.new("TerrainElevation")
 
@@ -76,17 +96,7 @@ obj = bpy.data.objects["TerrainElevationObj"]
 
 # Create a new material
 mat = bpy.data.materials.new(name="MyMaterial")
-# Assign the material to the object
-if len(obj.data.materials):
-    # Object has materials, replace the first one
-    obj.data.materials[0] = mat
-else:
-    # No materials on the object, add new
-    obj.data.materials.append(mat)
 
-# After mesh creation
-print("Mesh vertices count:", len(mesh.vertices))
-print("Mesh polygons count:", len(mesh.polygons))
     
 # Ensure object is visible in the viewport and render
 obj.hide_viewport = False
