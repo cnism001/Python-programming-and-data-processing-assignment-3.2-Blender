@@ -100,3 +100,25 @@ bm.to_mesh(mesh)
 
 # Delete memory based mesh
 bm.free()
+
+
+import bpy
+
+# Property group to store properties for the map area
+class MapDataProps(bpy.types.PropertyGroup):
+    area_name: bpy.props.StringProperty(name="Area Name")  # Property to store the name of the area
+    north: bpy.props.FloatProperty(name="North")  # North coordinate
+    west: bpy.props.FloatProperty(name="West")  # West coordinate
+    south: bpy.props.FloatProperty(name="South")  # South coordinate
+    east: bpy.props.FloatProperty(name="East")  # East coordinate
+
+# Operator to handle the user input
+class MapDataOperator(bpy.types.Operator):
+    bl_idname = "object.map_data"  # Unique identifier for the operator
+    bl_label = "Define Area"  # Label displayed in the UI
+
+    def execute(self, context):
+        props = context.scene.MapDataProps
+        print("Area Defined:", props.area_name)
+        print("North:", props.north, "West:", props.west, "South:", props.south, "East:", props.east)
+        return {'FINISHED'}
