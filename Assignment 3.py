@@ -23,12 +23,12 @@ def read_file(file_path):
         heights = [list(map(float, line.split())) for line in file]
 
     return heights, ncols, nrows, xllcorner, yllcorner, cellsize
-ase_x = 500000
+base_x = 500000
 base_y = 6834000 #offset for starting position, its not visible otherwise
 # Scaling factors
-#x_scale = 0.05
-#y_scale = 0.05
-#z_scale = 0.05
+x_scale = 0.05
+y_scale = 0.05
+z_scale = 0.05
 # Reading the elevation data from the file
 heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
 
@@ -42,9 +42,9 @@ for row_index, row in enumerate(heights):
     #elevation value give in the file is z
     for col_index, z in enumerate(row):
         # Calculate the x and y coordinates based on the grid position and cell size
-        x = (xllcorner + col_index * cellsize) #* x_scale
-        y = (yllcorner + row_index * cellsize) #* y_scale
-        #z = z * z_scale
+        x = ((xllcorner + col_index * cellsize) - base_x) * x_scale
+        y = ((yllcorner + row_index * cellsize) - base_y) * y_scale
+        z = z * z_scale
         # Create a new vertex at the calculated position with the elevation as the z-coordinate in the mesh bm
         vert = bm.verts.new((x, y, z))
         # Add the vertex to the list
