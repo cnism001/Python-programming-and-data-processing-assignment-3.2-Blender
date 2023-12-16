@@ -122,3 +122,24 @@ class MapDataOperator(bpy.types.Operator):
         print("Area Defined:", props.area_name)
         print("North:", props.north, "West:", props.west, "South:", props.south, "East:", props.east)
         return {'FINISHED'}
+
+# Panel to display in the UI
+class DefineMapAreaPanel(bpy.types.Panel):
+    bl_label = "Define Map Area"  # Label for the panel
+    bl_idname = "VIEW3D_PT_define_map_area"  # Unique identifier for the panel
+    bl_space_type = "VIEW_3D"  # Type of space where the panel is located
+    bl_region_type = "UI"  # Type of region in the space
+    bl_category = "Map Area"  # Category under which the panel is grouped
+
+    def draw(self, context):
+        props = context.scene.MapDataProps
+        layout = self.layout
+
+        # Create UI elements
+        layout.prop(props, "area_name")  # Input field for area name
+        layout.prop(props, "north")  # Input field for north coordinate
+        layout.prop(props, "west")  # Input field for west coordinate
+        layout.prop(props, "south")  # Input field for south coordinate
+        layout.prop(props, "east")  # Input field for east coordinate
+
+        layout.operator("object.map_data")  # Button to trigger the operator
