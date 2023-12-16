@@ -143,3 +143,20 @@ class DefineMapAreaPanel(bpy.types.Panel):
         layout.prop(props, "east")  # Input field for east coordinate
 
         layout.operator("object.map_data")  # Button to trigger the operator
+
+# Register function to add the classes to Blender
+def register():
+    bpy.utils.register_class(MapDataProps)
+    bpy.utils.register_class(MapDataOperator)
+    bpy.utils.register_class(DefineMapAreaPanel)
+    bpy.types.Scene.MapDataProps = bpy.props.PointerProperty(type=MapDataProps)
+
+# Unregister function to remove the classes from Blender
+def unregister():
+    bpy.utils.unregister_class(DefineMapAreaPanel)
+    bpy.utils.unregister_class(MapDataOperator)
+    bpy.utils.unregister_class(MapDataProps)
+    del bpy.types.Scene.MapDataProps
+
+if __name__ == "__main__":
+    register()
