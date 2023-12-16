@@ -30,3 +30,6 @@ def read_file(file_path):
 
 # Path to the .asc file
 file_path = 'd:\\M5221_resampled.asc'
+
+# Reading the elevation data from the file
+heights, ncols, nrows, xllcorner, yllcorner, cellsize = read_file(file_path)
