@@ -1,10 +1,4 @@
-# ReadEsriFile.py -- Open file and read the first lines that contain header
-
-# Print is done in console that can be opened from "Window" menu -> "Toggle System Console". 
-# Opening file and printing is done the same way as in any python script or application.
-
-
-
+#commented in VSCode, uncommented in Blender
 #import bpy
 #import bmesh
 
@@ -39,3 +33,17 @@ bm = bmesh.new()
 
 # Create a list to store references to the vertices created below
 verts = []
+
+# Iterate over each row and column in the elevation data
+for row_index, row in enumerate(heights):
+    #elevation value give in the file is z
+    for col_index, z in enumerate(row):
+        # Calculate the x and y coordinates based on the grid position and cell size
+        x = xllcorner + col_index * cellsize
+        y = yllcorner + row_index * cellsize
+
+        # Create a new vertex at the calculated position with the elevation as the z-coordinate in the mesh bm
+        vert = bm.verts.new((x, y, z))
+        # Add the vertex to the list
+        verts.append(vert)
+
