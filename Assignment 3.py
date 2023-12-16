@@ -71,11 +71,35 @@ mesh = bpy.data.meshes.new("TerrainElevation")
 # Create a new Blender object that uses the mesh data
 obj = bpy.data.objects.new("TerrainElevationObj", mesh)
 
+# Assume 'obj' is your object
+obj = bpy.data.objects["TerrainElevationObj"]
+
+# Create a new material
+mat = bpy.data.materials.new(name="MyMaterial")
+# Assign the material to the object
+if len(obj.data.materials):
+    # Object has materials, replace the first one
+    obj.data.materials[0] = mat
+else:
+    # No materials on the object, add new
+    obj.data.materials.append(mat)
+
+# After mesh creation
+print("Mesh vertices count:", len(mesh.vertices))
+print("Mesh polygons count:", len(mesh.polygons))
+    
+# Ensure object is visible in the viewport and render
+obj.hide_viewport = False
+obj.hide_render = False
+
 # Link the object to the active collection in the scene to visualize it
 bpy.context.collection.objects.link(obj)
 
 # Convert the bmesh data to the mesh data 
 bm.to_mesh(mesh)
-
+mesh.update()
 # Free the bmesh to release memory
 bm.free()
+
+print(obj.data.vertices)  # Should list vertices
+print(obj.data.polygons)  # Should list polygons
